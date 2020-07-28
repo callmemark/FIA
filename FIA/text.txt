@@ -1,0 +1,8 @@
+F.I.A
+Fits Image Analyzer
+
+This version is unstable and still under development.
+
+It is under MIT licsence a opensource licsence for developers to improve and add new features. For bugs, issues or recommendations just reach up on my github repository 
+
+version 0.0.1 Beta
