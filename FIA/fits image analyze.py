@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
 from astropy.utils.data import get_pkg_data_filename
+import numpy as np 
 
-plt.style.use(astropy_mpl_style)
+
 
 
 class Main():
@@ -34,30 +35,20 @@ class Main():
 			command = lambda: frameToggles("file options"))
 		self.file_options.place(x = "4px", y = "10px")
 
-		self.inspect_data_frame = Button(self.side_options_frame, text = "inspect data", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.information_frame = Button(self.side_options_frame, text = "information", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: frameToggles("inspect data"))
-		self.inspect_data_frame.place(x = "4px", y = "30px")
+		self.information_frame.place_forget()
 
-		self.show_histogram_frame = Button(self.side_options_frame, text = "inspect picture", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
-			command = lambda: frameToggles("histogram"))
-		self.show_histogram_frame.place(x = "4px", y = "50px")
-
-		self.show_histogram_frame = Button(self.side_options_frame, text = "show histogram", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
-			command = lambda: frameToggles("histogram"))
-		self.show_histogram_frame.place(x = "4px", y = "70px")
-
-
-		self.inspectDataFrame()
 		self.fileOptionsFrame()
 
 		
 		def frameToggles(frame_name):
 			if frame_name == "file options":
 				self.fileOptionsFrame()
-				self.file_inspect_data_frame.place_forget()
+				self.information_frame.place_forget()
 
 			elif frame_name == "inspect data":
-				self.inspectDataFrame()
+				self.information()
 				self.file_options_frame.place_forget()
 
 			elif frame_name == "histogram":
@@ -90,6 +81,7 @@ class Main():
 		intro_text.insert(END, message)
 		intro_text.configure(state = "disabled", cursor = "arrow")
 
+
 		preview_button = Button(self.file_options_frame, text = "Preview", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
 			command = lambda: previewImge(self.ufile_image_entry.get()))
 		preview_button.place(x = "420px", y = "370px")
@@ -97,6 +89,7 @@ class Main():
 
 		def previewImge(image):
 			try:
+				plt.style_use(astropy_mpl_style)
 				image_file = get_pkg_data_filename(image)
 				image_data = fits.getdata(image_file, ext=0)
 
@@ -109,24 +102,84 @@ class Main():
 
 
 	def importPicture(self, image_name):
-		self.imported_image = image_name
-		self.image_file = get_pkg_data_filename(self.imported_image)
-		self.image_data = fits.getdata(self.image_file, ext=0)
+		try:
+			self.imported_image = image_name
+			self.image_file = get_pkg_data_filename(self.imported_image)
+			self.image_data = fits.getdata(self.image_file, ext=0)
+
+			self.information_frame.place(x = "4px", y = "30px")
+		except Exception as error:
+			print(error)
 
 
-	def inspectDataFrame(self):
-		self.file_inspect_data_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
-		self.file_inspect_data_frame.place(x = "100px", y = "0px")
+	def information(self):
 
-		self.output_shell = Text(self.file_inspect_data_frame, bg = self.frame_dark_color, fg = self.text_dark_color, width = 80, height = 15)
-		self.output_shell.place(x = "7px", y = "10px")
+		self.information_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
+		self.information_frame.place(x = "100px", y = "0px")
+
+		self.image_size_information = Frame(self.information_frame, bg = self.frame_dark_color, width = "100px", height = "100px", 
+			highlightbackground = "black", highlightcolor="black", highlightthickness=1)
+		self.image_size_information.place(x = "5px", y = "5px")
+		Label(self.information_frame, text = "image information", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "0px")
+
+
+		self.data_min = np.min(self.image_data)
+		self.data_max = np.max(self.image_data)
+		self.data_mean = np.mean(self.image_data)
+		self.data_Stdev = np.std(self.image_data)
+
+
+		Label(self.information_frame, text = "min:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "20px")
+		data_min = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		data_min.insert(END, self.data_min)
+		data_min.place(x = "50px", y = "20px")
+
+		Label(self.information_frame, text = "max:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "40px")
+		data_max = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		data_max.insert(END, self.data_max)
+		data_max.place(x = "50px", y = "40px")
+
+		Label(self.information_frame, text = "mean:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "60px")
+		data_mean = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		data_mean.insert(END, self.data_mean)
+		data_mean.place(x = "50px", y = "60px")
+
+		Label(self.information_frame, text = "Stdev:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "80px")
+		data_Stdev = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		data_Stdev.insert(END, self.data_Stdev)
+		data_Stdev.place(x = "50px", y = "80px")
+
+
+		self.show_info = Button(self.information_frame, text = "image statistics", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			command = lambda: printImageInfo())
+		self.show_info.place(x = "5px", y = "120px")
+
+		view_image = Button(self.information_frame, text = "view image", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
+			command = lambda: self.viewImage())
+		view_image.place(x = "420px", y = "370px")
+
+		view_histogram = Button(self.information_frame, text = "view histogram", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
+			command = lambda: self.showHistogram())
+		view_histogram.place(x = "360px", y = "370px")
+
+		def printImageInfo():
+			self.info = fits.info(self.image_file)
+
+
+
+	def viewImage(self):
+		plt.style_use(astropy_mpl_style)
+		plt.figure()
+		plt.imshow(self.image_data)
+		plt.colorbar()
+		plt.show()
 
 
 	def showHistogram(self):
+		plt.style.use("ggplot")
 		NBINS = 1000
 		histogram = plt.hist(self.image_data.flatten(), NBINS)
 		plt.show()
-
 
 
 
