@@ -31,31 +31,39 @@ class Main():
 		self.side_options_frame.place(x = "0px", y = "0px")
 
 
-		self.file_options = Button(self.side_options_frame, text = "file options", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.file_options_button = Button(self.side_options_frame, text = "file options", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: frameToggles("file options"))
-		self.file_options.place(x = "4px", y = "10px")
+		self.file_options_button.place(x = "4px", y = "10px")
 
-		self.information_frame = Button(self.side_options_frame, text = "information", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.information_button = Button(self.side_options_frame, text = "information", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: frameToggles("inspect data"))
-		self.information_frame.place_forget()
+		self.information_button.place_forget()
+
+		self.header_button = Button(self.side_options_frame, text = "Header", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			command = lambda: frameToggles("header option"))
+		self.header_button.place_forget()
 
 		self.fileOptionsFrame()
-
+			
 		
 		def frameToggles(frame_name):
+			print(frame_name)
 			if frame_name == "file options":
 				self.fileOptionsFrame()
-				self.information_frame.place_forget()
 
 			elif frame_name == "inspect data":
-				self.information()
+				self.information_frame.place(x = "100px", y = "0px")
+				self.header_frame.place_forget()
 				self.file_options_frame.place_forget()
 
-			elif frame_name == "histogram":
-				self.showHistogram()
+			elif frame_name == "header option":
+				self.header_frame.place(x = "100px", y = "0px")
+				self.information_frame.place_forget()
+				self.file_options_frame.place_forget()
 
 		self.root.resizable(0,0)
 		self.root.mainloop()
+
 
 
 	def fileOptionsFrame(self):
@@ -89,7 +97,7 @@ class Main():
 
 		def previewImge(image):
 			try:
-				plt.style_use(astropy_mpl_style)
+				plt.style.use(astropy_mpl_style)
 				image_file = get_pkg_data_filename(image)
 				image_data = fits.getdata(image_file, ext=0)
 
@@ -101,26 +109,42 @@ class Main():
 				print(error)
 
 
+
 	def importPicture(self, image_name):
+		def initializeFrames():
+			self.fileOptionsFrame()
+
+			self.information()
+			self.information_frame.place_forget()
+			print("called")
+
+			self.header()
+			self.header_frame.place_forget()
+
+
 		try:
 			self.imported_image = image_name
 			self.image_file = get_pkg_data_filename(self.imported_image)
 			self.image_data = fits.getdata(self.image_file, ext=0)
 
-			self.information_frame.place(x = "4px", y = "30px")
+			self.information_button.place(x = "4px", y = "30px")
+			self.header_button.place(x = "4px", y = "50px")
+
+			initializeFrames()
+
 		except Exception as error:
 			print(error)
 
 
-	def information(self):
 
+	def information(self):
 		self.information_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
 		self.information_frame.place(x = "100px", y = "0px")
 
 		self.image_size_information = Frame(self.information_frame, bg = self.frame_dark_color, width = "100px", height = "100px", 
 			highlightbackground = "black", highlightcolor="black", highlightthickness=1)
 		self.image_size_information.place(x = "5px", y = "5px")
-		Label(self.information_frame, text = "image information", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "0px")
+		Label(self.information_frame, text = "Statistics", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "0px")
 
 
 		self.data_min = np.min(self.image_data)
@@ -134,15 +158,18 @@ class Main():
 		data_min.insert(END, self.data_min)
 		data_min.place(x = "50px", y = "20px")
 
+
 		Label(self.information_frame, text = "max:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "40px")
 		data_max = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
 		data_max.insert(END, self.data_max)
 		data_max.place(x = "50px", y = "40px")
 
+
 		Label(self.information_frame, text = "mean:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "60px")
 		data_mean = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
 		data_mean.insert(END, self.data_mean)
 		data_mean.place(x = "50px", y = "60px")
+
 
 		Label(self.information_frame, text = "Stdev:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "80px")
 		data_Stdev = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
@@ -150,25 +177,94 @@ class Main():
 		data_Stdev.place(x = "50px", y = "80px")
 
 
-		self.show_info = Button(self.information_frame, text = "image statistics", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.show_info = Button(self.information_frame, text = "image information", width = 15, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: printImageInfo())
-		self.show_info.place(x = "5px", y = "120px")
+		self.show_info.place(x = "220px", y = "370px")
 
-		view_image = Button(self.information_frame, text = "view image", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
-			command = lambda: self.viewImage())
-		view_image.place(x = "420px", y = "370px")
 
-		view_histogram = Button(self.information_frame, text = "view histogram", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
+		view_histogram = Button(self.information_frame, text = "view histogram", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
 			command = lambda: self.showHistogram())
-		view_histogram.place(x = "360px", y = "370px")
+		view_histogram.place(x = "310px", y = "370px")
+
+
+		view_image = Button(self.information_frame, text = "view image", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
+			command = lambda: self.viewImage())
+		view_image.place(x = "400px", y = "370px")
+		
 
 		def printImageInfo():
 			self.info = fits.info(self.image_file)
 
 
+	def header(self):
+		self.header_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
+		self.header_frame.place(x = "100px", y = "0px")
+
+		self.header_output_screen = Text(self.header_frame, bg = self.frame_dark_color, fg = self.text_color, width = 80, height = 7, wrap = WORD)
+		self.header_output_screen.place(x = "7px", y = "2px")
+
+		expand_header = Button(self.header_frame, text = "expand", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
+			command = lambda: expandHeader())
+		expand_header.place(x = "400px", y = "90px")
+
+
+		Label(self.header_frame, text = "show header", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "100px")
+		self.uinp_header = Entry(self.header_frame, bg = self.frame_dark_color, width = 10)
+		self.uinp_header.place(x = "10px", y = "120px")
+
+		view_header = Button(self.header_frame, text = "execute", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
+			command = lambda: getHeader())
+		view_header.place(x = "70px", y = "120px")
+
+
+		Label(self.header_frame, text = "change value of:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "160px")
+		self.uinp_change_header_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
+		self.uinp_change_header_value.place(x = "10px", y = "180px")
+
+		Label(self.header_frame, text = "value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "120px", y = "160px")
+		self.uinp_change_header_new_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
+		self.uinp_change_header_new_value.place(x = "100px", y = "180px")
+
+		change_header_value = Button(self.header_frame, text = "execute", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
+			command = lambda: changeHeaderValue(self.uinp_change_header_value.get(), self.uinp_change_header_new_value.get()))
+		change_header_value.place(x = "10px", y = "200px")
+
+
+		def changeHeaderValue(key_name, new_val):
+			fits.setval(self.image_file, key_name, value = new_val)
+			getHeader()
+
+
+		def getHeader():
+			self.header_output = (repr(fits.getheader(self.image_file, int(self.uinp_header.get()))))
+			self.header_output_screen.delete(END, "1.0")
+			self.header_output_screen.insert(END, str(self.header_output))
+			self.header_output_screen.configure(state = "disabled", cursor = "arrow")
+
+		def expandHeader():
+			header_window = Tk()
+			header_window.title("header")
+
+			header_expanded_screen = Text(header_window, bg = self.frame_dark_color, fg = self.text_color, width = 120, height = 40, wrap = WORD)
+			header_expanded_screen.pack()
+
+			try:
+				header_expanded_screen.insert(END, str(self.header_output))
+			except AttributeError:
+				print("no inputs")
+
+			header_expanded_screen.configure(state = "disabled", cursor = "arrow")
+
+			header_window.resizable(0,0)
+			header_window.mainloop()
+
+
+
+
+
 
 	def viewImage(self):
-		plt.style_use(astropy_mpl_style)
+		plt.style.use(astropy_mpl_style)
 		plt.figure()
 		plt.imshow(self.image_data)
 		plt.colorbar()
