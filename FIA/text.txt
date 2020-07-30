@@ -3,6 +3,13 @@ Fits Image Analyzer
 
 This version is unstable and still under development.
 
-It is under MIT licsence a opensource licsence for developers to improve and add new features. For bugs, issues or recommendations just reach up on my github repository 
+It is under MIT licsence 
+A short and simple permissive license with conditions only requiring preservation of copyright and license notices. Licensed works, modifications, and larger works may be distributed under different terms and without source code.
 
-version 0.0.1 Beta
+for bugs: please open issue on my github account
+https://github.com/xxmeowxx/FIA/issues
+
+version 0.0.2 Beta
+
+from me to astropy developers: 
+astropy is awesome :)
