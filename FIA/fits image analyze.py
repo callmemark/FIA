@@ -1,10 +1,13 @@
-from tkinter import *
+from tkinter import Frame, Button, StringVar, Entry, OptionMenu, Label, Text, Tk, WORD, END
 import matplotlib.pyplot as plt 
 from astropy.io import fits
 from astropy.visualization import astropy_mpl_style
 from astropy.utils.data import get_pkg_data_filename
-import numpy as np 
+from matplotlib.colors import LogNorm
+import numpy as np
 from PIL import Image
+import sys
+from math import log
 
 
 class Main():
@@ -20,6 +23,8 @@ class Main():
 		self.frame_dark_color = "#363636"
 		self.entry_text_color = "#d4d4d4"
 		self.btn_colot_dark = "#8c8c8c"
+
+
 
 
 	def MainFrameWidgets(self):
@@ -44,6 +49,12 @@ class Main():
 		self.header_button.place_forget()
 
 
+
+		self.exit_button = Button(self.side_options_frame, text = "EXIT", width = 16, bg = "red", bd = "0px", fg =  "white",
+			command = lambda: self.programExit())
+		self.exit_button.place(x = "4px", y = "370px")
+
+
 		self.fileOptionsFrame()
 			
 		
@@ -64,6 +75,9 @@ class Main():
 
 		self.root.resizable(0,0)
 		self.root.mainloop()
+
+
+
 
 
 
@@ -102,8 +116,6 @@ class Main():
 
 
 
-
-
 		intro_text = Text(self.file_options_frame, bg = self.frame_dark_color, width = 70, height = 20, bd = "0px", fg = self.text_color,
 			wrap = WORD)
 		intro_text.place(x = "15px", y = "160px")
@@ -112,10 +124,6 @@ class Main():
 		message = text_file.read()
 		intro_text.insert(END, message)
 		intro_text.configure(state = "disabled", cursor = "arrow")
-
-
-
-		
 
 
 		def previewImge(image):
@@ -133,20 +141,19 @@ class Main():
 
 
 
+
 	def importPicture(self, image_name):
 		def initializeFrames():
 			self.fileOptionsFrame()
 
-			print("called")
-
 			self.information()
 			self.information_frame.place_forget()
-			print("called")
+
 
 			self.header()
 			self.header_frame.place_forget()
-			print("called")
 
+			print(">>> value init")
 
 		try:
 			self.imported_image = image_name
@@ -157,9 +164,12 @@ class Main():
 			self.header_button.place(x = "4px", y = "50px")
 
 			initializeFrames()
+			print(">>> import complete")
 
 		except Exception as error:
 			print(error)
+
+
 
 
 
@@ -203,9 +213,38 @@ class Main():
 		data_Stdev.place(x = "50px", y = "80px")
 
 
+
+
+		Label(self.information_frame, text = "max value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "130px", y = "5px")
+		self.contrast_max_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.contrast_max_value.place(x = "130px", y = "30px")
+
+
+		Label(self.information_frame, text = "min value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "180px", y = "5px")
+		self.contrast_min_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.contrast_min_value.place(x = "180px", y = "30px")
+
+
+		self.update_contrast_btn = Button(self.information_frame, text = "update", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			command = lambda: self.contrastAdjust(self.contrast_max_value .get(), self.contrast_min_value.get()))
+		self.update_contrast_btn.place(x = "130px", y = "70px")
+
+
+		self.contrast_status = StringVar(self.information_frame)
+		self.contrast_status.set("inactive")
+
+		contrast_status_option = OptionMenu(self.information_frame, self.contrast_status, "inactive", "active")
+		contrast_status_option.place(x = "130px", y = "50px")
+		contrast_status_option.config(width = 9, bg = self.btn_colot_dark, fg = self.text_color, bd = "0px", highlightbackground = "black", 
+		highlightcolor="black", highlightthickness=1)
+
+
+
+
 		Label(self.information_frame, text = "color filter:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "5px")
 		self.image_cmap = StringVar(self.information_frame)
 		self.image_cmap.set("BrBG")
+
 
 		cmap_options = OptionMenu(self.information_frame, self.image_cmap, 'Accent', 'Accent_r', 'Blues', 'Blues_r', 'BrBG', 'BrBG_r', 'BuGn', 
 			'BuGn_r', 'BuPu', 'BuPu_r', 'CMRmap', 'CMRmap_r', 'Dark2', 'Dark2_r', 'GnBu', 'GnBu_r', 'Greens', 'Greens_r', 'Greys', 'Greys_r', 
@@ -226,6 +265,16 @@ class Main():
 		highlightcolor="black", highlightthickness=1)
 
 
+		Label(self.information_frame, text = "view type:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "40px")
+		self.image_view_type = StringVar(self.information_frame)
+		self.image_view_type.set("normal scale")
+
+		image_type_options = OptionMenu(self.information_frame, self.image_view_type, "normal scale", "log scale")
+		image_type_options.place(x = "390px", y = "60px")
+		image_type_options.config(width = 15, bg = self.btn_colot_dark, fg = self.text_color, bd = "0px", highlightbackground = "black", 
+		highlightcolor="black", highlightthickness=1)
+
+
 
 
 		self.show_info = Button(self.information_frame, text = "image information", width = 15, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
@@ -239,12 +288,25 @@ class Main():
 
 
 		view_image = Button(self.information_frame, text = "view image", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
-			command = lambda: self.viewImage(self.image_cmap.get()))
+			command = lambda: callViewImage())
 		view_image.place(x = "400px", y = "370px")
+
+
+		def callViewImage():
+			try:
+				self.viewImage(self.image_cmap.get(), self.image_view_type.get(), self.contrast_status.get())
+			except Exception as error:
+				print("--!--" + str(error) + "--!--")
+				print("(check if your using contrast clamping without a value)")
+
 		
 
 		def printImageInfo():
 			self.info = fits.info(self.image_file)
+
+
+
+
 
 
 	def header(self):
@@ -320,6 +382,10 @@ class Main():
 			header_window.mainloop()
 
 
+
+
+
+
 	def previewRGBimage(self, unip_RGB_image):
 		try:
 			rgb_image = Image.open(unip_RGB_image)
@@ -332,6 +398,10 @@ class Main():
 
 		except Exception as error:
 			print("--!--" + str(error) + "--!--")
+
+
+
+
 
 
 	def seperateRGBImage(self, unip_RGB_image):
@@ -370,17 +440,67 @@ class Main():
 
 
 
-	def viewImage(self, cmap_value):
+
+
+	def contrastAdjust(self, max_clamp, min_clamp):
+		try:
+			max_clamp_value = int(max_clamp)
+			min_clamp_value = int(min_clamp)
+
+			data = self.image_data
+
+			data_nrow = data.shape[0]
+			data_ncol = data.shape[1]
+
+			flatten_data = data.flatten()
+
+			log_values = []
+
+			print(">>> processing.....")
+
+			for data_values in flatten_data:
+				if data_values > max_clamp_value:
+					data_values = log(data_values)
+				else:
+					data_values -= data_values
+
+				log_values.append(data_values)
+
+			log_values = np.array(log_values).reshape(data_nrow, data_ncol)
+			
+			self.contrasted_data = log_values
+			print(">>> complete")
+
+		except Exception as error:
+			print("--!--" + error + "--!--" )
+			print(">>> failed")
+
+
+
+	def viewImage(self, cmap_value, view_type, contrast_status):
+		if contrast_status == "inactive":
+			image_data = self.image_data
+		
+		elif contrast_status == "active":
+			image_data = self.contrasted_data
+
 		try:
 			plt.style.use(astropy_mpl_style)
 			plt.figure(figsize = (7, 5)).patch.set_facecolor(self.frame_dark_color)
 			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
-			plt.imshow(self.image_data, cmap = cmap_value)
+
+			if view_type == "normal scale":
+				plt.imshow(image_data, cmap = cmap_value)
+			else:
+				plt.imshow(image_data, cmap = cmap_value, norm = LogNorm())
+
 			plt.colorbar()
 			plt.show()
 
 		except Exception as error:
 			print("--!--" + str(error) + "--!--")
+
+
 
 		
 
@@ -399,6 +519,19 @@ class Main():
 
 		except Exception as error:
 			print("--!--" + str(error) + "--!--")
+
+
+
+
+
+		except Exception as error:
+			print(error)
+
+
+
+	def programExit(self):
+		self.root.destroy()
+		sys.exit()
 
 
 if __name__ == "__main__":
