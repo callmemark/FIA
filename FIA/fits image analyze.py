@@ -8,6 +8,9 @@ import numpy as np
 from PIL import Image
 import sys
 from math import log
+from colorama import Fore, init
+
+init()
 
 
 class Main():
@@ -36,11 +39,11 @@ class Main():
 		self.side_options_frame.place(x = "0px", y = "0px")
 
 
-		self.file_options_button = Button(self.side_options_frame, text = "file options", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.file_options_button = Button(self.side_options_frame, text = "File options", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: frameToggles("file options"))
 		self.file_options_button.place(x = "4px", y = "10px")
 
-		self.information_button = Button(self.side_options_frame, text = "information", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.information_button = Button(self.side_options_frame, text = "Information", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: frameToggles("inspect data"))
 		self.information_button.place_forget()
 
@@ -73,11 +76,9 @@ class Main():
 				self.information_frame.place_forget()
 				self.file_options_frame.place_forget()
 
+
 		self.root.resizable(0,0)
 		self.root.mainloop()
-
-
-
 
 
 
@@ -86,12 +87,12 @@ class Main():
 		self.file_options_frame.place(x = "100px", y = "0px")
 
 		Label(self.file_options_frame, text = "import .fits", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "10px")
-		self.ufile_image_entry = Entry(self.file_options_frame, width = 30, bg = self.inp_field_color, fg = self.entry_text_color, bd = "0px", 
+		self.ufile_image_entry = Entry(self.file_options_frame, width = 25, bg = self.inp_field_color, fg = self.entry_text_color, bd = "0px", 
 			insertbackground = self.entry_text_color)
 		self.ufile_image_entry.place(x = "10px", y = "30px")
 
 		self.import_file_button = Button(self.file_options_frame, text = "Import", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
-			command = lambda: self.importPicture(self.ufile_image_entry.get()))
+			command = lambda: self.importPicture(self.ufile_image_entry.get(), "single image"))
 		self.import_file_button.place(x = "10px", y = "60px")
 
 		preview_button = Button(self.file_options_frame, text = "Preview", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px", 
@@ -101,18 +102,44 @@ class Main():
 
 
 
-		Label(self.file_options_frame, text = "import .jpg", bg = self.frame_dark_color, fg = self.text_color).place(x = "310px", y = "10px")
-		self.ufile_jpg_image_entry = Entry(self.file_options_frame, width = 30, bg = self.inp_field_color, fg = self.entry_text_color, bd = "0px", 
+		Label(self.file_options_frame, text = "import .jpg", bg = self.frame_dark_color, fg = self.text_color).place(x = "170px", y = "10px")
+		self.ufile_jpg_image_entry = Entry(self.file_options_frame, width = 25, bg = self.inp_field_color, fg = self.entry_text_color, bd = "0px", 
 			insertbackground = self.entry_text_color)
-		self.ufile_jpg_image_entry.place(x = "310px", y = "30px")
+		self.ufile_jpg_image_entry.place(x = "170px", y = "30px")
 
 		self.seperate_jpg_file_button = Button(self.file_options_frame, text = "Seperate", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
 			command = lambda: self.seperateRGBImage(self.ufile_jpg_image_entry.get()))
-		self.seperate_jpg_file_button.place(x = "310px", y = "60px")
+		self.seperate_jpg_file_button.place(x = "170px", y = "60px")
 
 		self.view_jpg_file_button = Button(self.file_options_frame, text = "preview", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
 			command = lambda: self.previewRGBimage(self.ufile_jpg_image_entry.get()))
-		self.view_jpg_file_button.place(x = "370px", y = "60px")
+		self.view_jpg_file_button.place(x = "230px", y = "60px")
+
+
+
+
+
+
+		Label(self.file_options_frame, text = "Stack fits", bg = self.frame_dark_color, fg = self.text_color).place(x = "330px", y = "10px")
+		ufile_stackk_image_entry = Entry(self.file_options_frame, width = 25, bg = self.inp_field_color, fg = self.entry_text_color, bd = "0px", 
+			insertbackground = self.entry_text_color)
+		ufile_stackk_image_entry.place(x = "330px", y = "30px")
+
+		self.add_file_tostack_button = Button(self.file_options_frame, text = "add", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
+			command = lambda: self.addStack(ufile_stackk_image_entry.get()))
+		self.add_file_tostack_button.place(x = "330px", y = "60px")
+
+		self.view_fits_file_button = Button(self.file_options_frame, text = "preview", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
+			command = lambda: previewImge(ufile_stackk_image_entry.get()))
+		self.view_fits_file_button.place(x = "390px", y = "60px")
+
+		self.view_fits_file_button = Button(self.file_options_frame, text = "import", bg = self.btn_colot_dark, fg =self.text_color, width = 10, bd = "0px",
+			command = lambda: self.importPicture( None , "stacked image"))
+		self.view_fits_file_button.place(x = "390px", y = "80px")
+
+		self.packed_list = []
+
+
 
 
 
@@ -142,7 +169,9 @@ class Main():
 
 
 
-	def importPicture(self, image_name):
+	def importPicture(self, image_type, import_type):
+		import_type = import_type
+
 		def initializeFrames():
 			self.fileOptionsFrame()
 
@@ -153,21 +182,42 @@ class Main():
 			self.header()
 			self.header_frame.place_forget()
 
-			print(">>> value init")
 
-		try:
-			self.imported_image = image_name
-			self.image_file = get_pkg_data_filename(self.imported_image)
-			self.image_data = fits.getdata(self.image_file, ext=0)
+			print(Fore.WHITE + ">>> value init")
 
-			self.information_button.place(x = "4px", y = "30px")
-			self.header_button.place(x = "4px", y = "50px")
 
-			initializeFrames()
-			print(">>> import complete")
+		if True:
+			if import_type == "single image":
+				self.imported_image = image_type
+				self.image_file = get_pkg_data_filename(self.imported_image)
+				self.image_data = fits.getdata(self.image_file, ext=0)
 
-		except Exception as error:
-			print(error)
+				self.information_button.place(x = "4px", y = "30px")
+				self.header_button.place(x = "4px", y = "50px")
+
+				initializeFrames()
+
+				print(Fore.WHITE + ">>> import complete")
+
+
+			elif import_type == "stacked image":
+				self.information_button.place(x = "4px", y = "30px")
+				self.header_button.place(x = "4px", y = "50px")
+
+				
+
+				image_list = self.packed_list
+				conacatenated_image = [fits.getdata(image) for image in image_list]
+				self.image_data = np.sum(conacatenated_image, axis = 0)
+				print(self.image_data)
+
+				print(Fore.WHITE + ">>> import complete")
+
+				initializeFrames()
+
+		else:		
+		#except Exception as error:
+			print(Fore.RED + "--!--" + str(error) + "--!--")  
 
 
 
@@ -177,7 +227,7 @@ class Main():
 		self.information_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
 		self.information_frame.place(x = "100px", y = "0px")
 
-		self.image_size_information = Frame(self.information_frame, bg = self.frame_dark_color, width = "100px", height = "100px", 
+		self.image_size_information = Frame(self.information_frame, bg = self.frame_dark_color, width = "120px", height = "150px", 
 			highlightbackground = "black", highlightcolor="black", highlightthickness=1)
 		self.image_size_information.place(x = "5px", y = "5px")
 		Label(self.information_frame, text = "Statistics", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "0px")
@@ -187,47 +237,66 @@ class Main():
 		self.data_max = np.max(self.image_data)
 		self.data_mean = np.mean(self.image_data)
 		self.data_Stdev = np.std(self.image_data)
+		self.data_shape = np.shape(self.image_data)
+		self.data_ndim = np.ndim(self.image_data)
 
 
-		Label(self.information_frame, text = "min:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "20px")
-		data_min = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		Label(self.image_size_information, text = "min:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "20px")
+		data_min = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
 		data_min.insert(END, self.data_min)
 		data_min.place(x = "50px", y = "20px")
 
 
-		Label(self.information_frame, text = "max:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "40px")
-		data_max = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		Label(self.image_size_information, text = "max:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "40px")
+		data_max = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
 		data_max.insert(END, self.data_max)
 		data_max.place(x = "50px", y = "40px")
 
 
-		Label(self.information_frame, text = "mean:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "60px")
-		data_mean = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		Label(self.image_size_information, text = "mean:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "60px")
+		data_mean = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
 		data_mean.insert(END, self.data_mean)
 		data_mean.place(x = "50px", y = "60px")
 
 
-		Label(self.information_frame, text = "Stdev:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "80px")
-		data_Stdev = Entry(self.information_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10, bd = "0px")
+		Label(self.image_size_information, text = "Stdev:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "80px")
+		data_Stdev = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
 		data_Stdev.insert(END, self.data_Stdev)
 		data_Stdev.place(x = "50px", y = "80px")
 
 
+		Label(self.image_size_information, text = "shape:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "100px")
+		data_Stdev = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
+		data_Stdev.insert(END, self.data_shape)
+		data_Stdev.place(x = "50px", y = "100px")
 
 
-		Label(self.information_frame, text = "max value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "130px", y = "5px")
+		Label(self.image_size_information, text = "N dim:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "120px")
+		data_Stdev = Entry(self.image_size_information, fg = self.text_color, bg = self.frame_dark_color, width = 14, bd = "0px")
+		data_Stdev.insert(END, self.data_ndim)
+		data_Stdev.place(x = "50px", y = "120px")
+
+
+
+
+		Label(self.information_frame, text = "max clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "130px", y = "5px")
 		self.contrast_max_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
 		self.contrast_max_value.place(x = "130px", y = "30px")
 
 
-		Label(self.information_frame, text = "min value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "180px", y = "5px")
+		Label(self.information_frame, text = "min clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "190px", y = "5px")
 		self.contrast_min_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
-		self.contrast_min_value.place(x = "180px", y = "30px")
+		self.contrast_min_value.place(x = "190px", y = "30px")
 
 
-		self.update_contrast_btn = Button(self.information_frame, text = "update", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
-			command = lambda: self.contrastAdjust(self.contrast_max_value .get(), self.contrast_min_value.get()))
-		self.update_contrast_btn.place(x = "130px", y = "70px")
+		self.update_contrast_btn = Button(self.information_frame, text = "execute", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			 activebackground = "red", command = lambda: self.contrastAdjust(self.contrast_max_value .get(), self.contrast_min_value.get()))
+		self.update_contrast_btn.place(x = "130px", y = "80px")
+
+
+		self.update_contrast_btn = Button(self.information_frame, text = "print array", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			 activebackground = "red", command = lambda: viewClampedData())
+		self.update_contrast_btn.place(x = "210px", y = "80px")
 
 
 		self.contrast_status = StringVar(self.information_frame)
@@ -267,23 +336,27 @@ class Main():
 
 		Label(self.information_frame, text = "view type:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "40px")
 		self.image_view_type = StringVar(self.information_frame)
-		self.image_view_type.set("normal scale")
+		self.image_view_type.set("linear scale")
 
-		image_type_options = OptionMenu(self.information_frame, self.image_view_type, "normal scale", "log scale")
+		image_type_options = OptionMenu(self.information_frame, self.image_view_type, "linear scale", "log scale")
 		image_type_options.place(x = "390px", y = "60px")
 		image_type_options.config(width = 15, bg = self.btn_colot_dark, fg = self.text_color, bd = "0px", highlightbackground = "black", 
 		highlightcolor="black", highlightthickness=1)
 
 
 
+		view_image = Button(self.information_frame, text = "print array", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
+			command = lambda: print(Fore.WHITE + " " + str(self.image_data)))
+		view_image.place(x = "130px", y = "370px")
 
-		self.show_info = Button(self.information_frame, text = "image information", width = 15, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+
+		self.show_info = Button(self.information_frame, text = "print information", width = 15, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			command = lambda: printImageInfo())
 		self.show_info.place(x = "220px", y = "370px")
 
 
 		view_histogram = Button(self.information_frame, text = "view histogram", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
-			command = lambda: self.showHistogram())
+			command = lambda: self.showHistogram(self.contrast_status.get()))
 		view_histogram.place(x = "310px", y = "370px")
 
 
@@ -292,20 +365,30 @@ class Main():
 		view_image.place(x = "400px", y = "370px")
 
 
+
+
 		def callViewImage():
 			try:
 				self.viewImage(self.image_cmap.get(), self.image_view_type.get(), self.contrast_status.get())
 			except Exception as error:
-				print("--!--" + str(error) + "--!--")
-				print("(check if your using contrast clamping without a value)")
+				print(Fore.RED + "--!--" + str(error) + "--!--")
+				print(Fore.RED + "(check if your using contrast clamping without a value)")
 
 		
 
 		def printImageInfo():
+			print(Fore.WHITE +"")
 			self.info = fits.info(self.image_file)
 
 
-
+		def viewClampedData():
+			try:
+				print(Fore.WHITE + "")
+				print(self.contrasted_data)
+			except AttributeError:
+				print(Fore.RED + "--!-- no calculated value --!--")
+			except Exception as error:
+				print(Fore.RED + "--!--" + str(error) + "--!--")
 
 
 
@@ -348,7 +431,7 @@ class Main():
 				fits.setval(self.image_file, key_name, value = new_val)
 				getHeader()
 			except Exception as error:
-				print("--!--" + str(error) + "--!--")
+				print(Fore.RED + "--!--" + str(error) + "--!--")
 
 
 		def getHeader():
@@ -359,10 +442,10 @@ class Main():
 				self.header_output_screen.configure(state = "disabled", cursor = "arrow")
 
 			except IndexError:
-				print("--!-- header input out of index --!--")
+				print(Fore.RED + "--!-- header input out of index --!--")
 
 			except ValueError:
-				print("--!-- invalid header input --!--")
+				print(Fore.RED + "--!-- invalid header input --!--")
 
 		def expandHeader():
 			header_window = Tk()
@@ -374,7 +457,7 @@ class Main():
 			try:
 				header_expanded_screen.insert(END, str(self.header_output))
 			except AttributeError:
-				print("--!-- no inputs --!--")
+				print(Fore.RED + "--!-- no inputs --!--")
 
 			header_expanded_screen.configure(state = "disabled", cursor = "arrow")
 
@@ -383,22 +466,41 @@ class Main():
 
 
 
-
-
-
 	def previewRGBimage(self, unip_RGB_image):
 		try:
 			rgb_image = Image.open(unip_RGB_image)
 			xsize, ysize = rgb_image.size
-			print("RGB Image size: {} x {}".format(xsize, ysize))
+			print(Fore.WHITE + "RGB Image size: {} x {}".format(xsize, ysize))
 			plt.figure(figsize = (5,3)).patch.set_facecolor(self.frame_dark_color)
 			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
 			plt.imshow(rgb_image)
 			plt.show()
 
 		except Exception as error:
-			print("--!--" + str(error) + "--!--")
+			print(Fore.RED + "--!--" + str(error) + "--!--")
 
+
+
+
+
+	def addStack(self, uentry):
+		user_entry = uentry
+		
+		if True:
+			
+			get_pkg_data_filename(user_entry)
+
+			self.packed_list.append(user_entry)
+			print(Fore.GREEN + "image: " + str(user_entry) + " added to stack")
+
+			print(self.packed_list)
+			
+
+		#except Exception as error:
+			#print("--!--" + str(error) + "--!--")
+
+
+		#self.image_stack_list = packed_list
 
 
 
@@ -433,10 +535,10 @@ class Main():
 			blue.header['LONGOBS'] = "110:56"
 			blue.writeto('FIA_blue.fits')
 
-			print(">>> jpg seperated succesfully (stored in folder where program is started)")
+			print(Fore.WHITE + ">>> jpg seperated succesfully (stored in folder where program is started)")
 
 		except Exception as error:
-			print("--!--" + str(error) + "--!--")
+			print(Fore.RED + "--!--" + str(error) + "--!--")
 
 
 
@@ -456,7 +558,10 @@ class Main():
 
 			log_values = []
 
-			print(">>> processing.....")
+			print(Fore.WHITE + ">>> calculating.....")
+			print(Fore.WHITE + ">>> time of calculation depends on how large is your data")
+			print(Fore.WHITE + ">>> some cases the gui may not respond for a while, while the data is being proccessed:")
+
 
 			for data_values in flatten_data:
 				if data_values > max_clamp_value:
@@ -469,11 +574,13 @@ class Main():
 			log_values = np.array(log_values).reshape(data_nrow, data_ncol)
 			
 			self.contrasted_data = log_values
-			print(">>> complete")
+			print(Fore.GREEN + ">>> complete")
 
 		except Exception as error:
-			print("--!--" + error + "--!--" )
-			print(">>> failed")
+			print(Fore.RED + "--!--" + str(error) + "--!--" )
+			print(Fore.RED + ">>> failed")
+
+
 
 
 
@@ -489,7 +596,7 @@ class Main():
 			plt.figure(figsize = (7, 5)).patch.set_facecolor(self.frame_dark_color)
 			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
 
-			if view_type == "normal scale":
+			if view_type == "linear scale":
 				plt.imshow(image_data, cmap = cmap_value)
 			else:
 				plt.imshow(image_data, cmap = cmap_value, norm = LogNorm())
@@ -498,38 +605,44 @@ class Main():
 			plt.show()
 
 		except Exception as error:
-			print("--!--" + str(error) + "--!--")
+			print(Fore.RED + "--!--" + str(error) + "--!--")
 
 
 
 		
 
-	def showHistogram(self):
+	def showHistogram(self, contrast_status):
 		try:
 			plt.figure(figsize = (5,3)).patch.set_facecolor(self.frame_dark_color)
 			
 			plt.style.use("ggplot")
 			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
 
-			plt.rcParams["axes.facecolor"] = "#bdbdbd"
+			plt.rcParams["axes.facecolor"] = "#828282"
 
 			NBINS = 1000
-			histogram = plt.hist(self.image_data.flatten(), NBINS)
+			if contrast_status == "inactive":
+				histogram = plt.hist(self.image_data.flatten(), NBINS)
+			elif contrast_status == "active":
+				try:
+					histogram = plt.hist(self.contrasted_data.flatten(), NBINS)
+				except Exception as error:
+					print(Fore.RED + "--!--" + str(error) + "--!--")
+
 			plt.show()
 
 		except Exception as error:
-			print("--!--" + str(error) + "--!--")
-
-
-
+			print(Fore.RED + "--!--" + str(error) + "--!--")
 
 
 		except Exception as error:
-			print(error)
+			print(Fore.RED + "--!--" + error + "--1--")
+
 
 
 
 	def programExit(self):
+		print(Fore.BLUE + ">>> quiting....")
 		self.root.destroy()
 		sys.exit()
 
