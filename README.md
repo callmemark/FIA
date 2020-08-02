@@ -1,6 +1,7 @@
 # FIA
 ### FITS IMAGE ANALYZER (under development)
 written in python3 
+See https://github.com/xxmeowxx/FIA/wiki for more information
 
 note: this is still underdevelopment, Bugs, Errors and other issues must be expected
  found bugs and other issues?
