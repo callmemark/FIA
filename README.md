@@ -1,5 +1,5 @@
 # FIA
-### FITS IMAGE ANALYZER (under development)
+### FITS IMAGE ANALYZER
 written in python3 
 See https://github.com/xxmeowxx/FIA/wiki for more information
 
