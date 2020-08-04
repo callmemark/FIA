@@ -279,33 +279,66 @@ class Main():
 
 
 
-		Label(self.information_frame, text = "max clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "130px", y = "5px")
-		self.contrast_max_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
-		self.contrast_max_value.place(x = "130px", y = "30px")
+
+		self.color_scaling_frame = Frame(self.information_frame, bg = self.frame_dark_color, width = "120px", height = "80px", 
+			highlightbackground = "black", highlightcolor="black", highlightthickness=1)
+		self.color_scaling_frame.place(x = "5px", y = "170px")
+		Label(self.information_frame, text = "color scaling", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "170px")
 
 
-		Label(self.information_frame, text = "min clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "190px", y = "5px")
-		self.contrast_min_value = Entry(self.information_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
-		self.contrast_min_value.place(x = "190px", y = "30px")
+		Label(self.color_scaling_frame, text = "vmax:", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "25px")
+		self.uinp_vmax_value = Entry(self.color_scaling_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.uinp_vmax_value.place(x = "5px", y = "50px")
 
 
-		self.update_contrast_btn = Button(self.information_frame, text = "execute", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		Label(self.color_scaling_frame, text = "vmin:", bg = self.frame_dark_color, fg = self.text_color).place(x = "60px", y = "25px")
+		self.uinp_vmin_value = Entry(self.color_scaling_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.uinp_vmin_value.place(x = "60px", y = "50px")
+
+
+
+
+
+		self.image_clamping_frame = Frame(self.information_frame, bg = self.frame_dark_color, width = "120px", height = "150px", 
+			highlightbackground = "black", highlightcolor="black", highlightthickness=1)
+		self.image_clamping_frame.place(x = "130px", y = "5px")
+		Label(self.information_frame, text = "Log Clamp", bg = self.frame_dark_color, fg = self.text_color).place(x = "140px", y = "0px")
+
+
+		Label(self.image_clamping_frame, text = "max clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "5px")
+		self.contrast_max_value = Entry(self.image_clamping_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.contrast_max_value.place(x = "5px", y = "30px")
+
+
+		Label(self.image_clamping_frame, text = "min clamp:", bg = self.frame_dark_color, fg = self.text_color).place(x = "60px", y = "5px")
+		self.contrast_min_value = Entry(self.image_clamping_frame, fg = self.text_color, bg = self.inp_field_color, width = 10, bd = "0px")
+		self.contrast_min_value.place(x = "60px", y = "30px")
+
+
+		self.update_contrast_btn = Button(self.image_clamping_frame, text = "execute", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			 activebackground = "red", command = lambda: self.contrastAdjust(self.contrast_max_value .get(), self.contrast_min_value.get()))
-		self.update_contrast_btn.place(x = "130px", y = "80px")
+		self.update_contrast_btn.place(x = "5px", y = "80px")
 
 
-		self.update_contrast_btn = Button(self.information_frame, text = "print array", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+		self.update_contrast_btn = Button(self.image_clamping_frame, text = "print array", width = 12, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
 			 activebackground = "red", command = lambda: viewClampedData())
-		self.update_contrast_btn.place(x = "210px", y = "80px")
+		self.update_contrast_btn.place(x = "5px", y = "100px")
 
 
-		self.contrast_status = StringVar(self.information_frame)
+		self.contrast_status = StringVar(self.image_clamping_frame)
 		self.contrast_status.set("inactive")
 
-		contrast_status_option = OptionMenu(self.information_frame, self.contrast_status, "inactive", "active")
-		contrast_status_option.place(x = "130px", y = "50px")
+		contrast_status_option = OptionMenu(self.image_clamping_frame, self.contrast_status, "inactive", "active")
+		contrast_status_option.place(x = "5px", y = "50px")
 		contrast_status_option.config(width = 9, bg = self.btn_colot_dark, fg = self.text_color, bd = "0px", highlightbackground = "black", 
 		highlightcolor="black", highlightthickness=1)
+
+
+
+
+
+
+
 
 
 
@@ -334,7 +367,7 @@ class Main():
 		highlightcolor="black", highlightthickness=1)
 
 
-		Label(self.information_frame, text = "view type:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "40px")
+		Label(self.information_frame, text = "scale:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "40px")
 		self.image_view_type = StringVar(self.information_frame)
 		self.image_view_type.set("linear scale")
 
@@ -486,7 +519,7 @@ class Main():
 	def addStack(self, uentry):
 		user_entry = uentry
 		
-		if True:
+		try:
 			
 			get_pkg_data_filename(user_entry)
 
@@ -496,13 +529,11 @@ class Main():
 			print(self.packed_list)
 			
 
-		#except Exception as error:
-			#print("--!--" + str(error) + "--!--")
+		except Exception as error:
+			print("--!--" + str(error) + "--!--")
 
 
-		#self.image_stack_list = packed_list
-
-
+		self.image_stack_list = self.packed_list
 
 
 
@@ -585,6 +616,32 @@ class Main():
 
 
 	def viewImage(self, cmap_value, view_type, contrast_status):
+		try:
+
+			uinp_vmax = self.uinp_vmax_value.get()
+			uinp_vmin = self.uinp_vmin_value.get()
+			
+			if uinp_vmax == "":
+				uinp_vmax = None
+			else:
+				try:
+					uinp_vmax = int(self.uinp_vmax_value.get())
+				except Exception as error:
+					print(Fore.RED + str(error))
+
+
+			if uinp_vmin == "":
+				uinp_vmin = None
+			else:
+				try:
+					uinp_vmin = int(self.uinp_vmin_value.get())
+				except Exception as error:
+					print(Fore.RED + str(error))
+
+		except Exception as error:
+			print(Fore.RED + str(error))
+
+
 		if contrast_status == "inactive":
 			image_data = self.image_data
 		
@@ -597,7 +654,7 @@ class Main():
 			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
 
 			if view_type == "linear scale":
-				plt.imshow(image_data, cmap = cmap_value)
+				plt.imshow(image_data, cmap = cmap_value, vmin = uinp_vmin, vmax = uinp_vmax)
 			else:
 				plt.imshow(image_data, cmap = cmap_value, norm = LogNorm())
 
@@ -626,17 +683,15 @@ class Main():
 			elif contrast_status == "active":
 				try:
 					histogram = plt.hist(self.contrasted_data.flatten(), NBINS)
-				except Exception as error:
-					print(Fore.RED + "--!--" + str(error) + "--!--")
+
+				except AttributeError:
+					print(Fore.RED + "--!--" + "error: check if the Log clamping is active without a value" + "--!--")
 
 			plt.show()
 
 		except Exception as error:
 			print(Fore.RED + "--!--" + str(error) + "--!--")
 
-
-		except Exception as error:
-			print(Fore.RED + "--!--" + error + "--1--")
 
 
 

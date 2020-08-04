@@ -1,5 +1,4 @@
-F.I.A
-Fits Image Analyzer
+F.I.A (Fits Image Analyzer)
 
 This version is unstable and still under development.
 
@@ -9,7 +8,7 @@ A short and simple permissive license with conditions only requiring preservatio
 for bugs: please open issue on my github account
 https://github.com/xxmeowxx/FIA/issues
 
-version 0.0.2 Beta
+wiki:
+https://github.com/xxmeowxx/FIA/wiki
 
-from me to astropy developers: 
-astropy is awesome :)
+version 0.0.2 Beta
