@@ -186,14 +186,14 @@ class Main():
 			print(Fore.WHITE + ">>> value init")
 
 
-		if True:
+		try:
 			if import_type == "single image":
 				self.imported_image = image_type
 				self.image_file = get_pkg_data_filename(self.imported_image)
 				self.image_data = fits.getdata(self.image_file, ext=0)
 
 				self.information_button.place(x = "4px", y = "30px")
-				self.header_button.place(x = "4px", y = "50px")
+				#self.header_button.place(x = "4px", y = "50px")
 
 				initializeFrames()
 
@@ -215,8 +215,8 @@ class Main():
 
 				initializeFrames()
 
-		else:		
-		#except Exception as error:
+			
+		except Exception as error:
 			print(Fore.RED + "--!--" + str(error) + "--!--")  
 
 
@@ -426,6 +426,11 @@ class Main():
 
 
 	def header(self):
+
+		###################################################################
+		## this functions is disabled in use im changing its functionaility
+		###################################################################
+
 		self.header_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
 		self.header_frame.place(x = "100px", y = "0px")
 
@@ -459,12 +464,18 @@ class Main():
 		change_header_value.place(x = "10px", y = "200px")
 
 
+
 		def changeHeaderValue(key_name, new_val):
-			try:
-				fits.setval(self.image_file, key_name, value = new_val)
-				getHeader()
-			except Exception as error:
+			if True:
+				hdul = fits.open(self.imported_image)
+
+				hdr = hdul[0].header
+				eval("hdr[key_name] = new_val")
+
+			else:
+			#except Exception as error:
 				print(Fore.RED + "--!--" + str(error) + "--!--")
+
 
 
 		def getHeader():
@@ -479,6 +490,7 @@ class Main():
 
 			except ValueError:
 				print(Fore.RED + "--!-- invalid header input --!--")
+
 
 		def expandHeader():
 			header_window = Tk()
