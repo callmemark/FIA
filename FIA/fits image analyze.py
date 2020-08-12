@@ -52,7 +52,6 @@ class Main():
 		self.header_button.place_forget()
 
 
-
 		self.exit_button = Button(self.side_options_frame, text = "EXIT", width = 16, bg = "red", bd = "0px", fg =  "white",
 			command = lambda: self.programExit())
 		self.exit_button.place(x = "4px", y = "370px")
@@ -62,7 +61,7 @@ class Main():
 			
 		
 		def frameToggles(frame_name):
-			print(frame_name)
+			#print(frame_name)
 			if frame_name == "file options":
 				self.fileOptionsFrame()
 
@@ -75,6 +74,7 @@ class Main():
 				self.header_frame.place(x = "100px", y = "0px")
 				self.information_frame.place_forget()
 				self.file_options_frame.place_forget()
+
 
 
 		self.root.resizable(0,0)
@@ -179,7 +179,7 @@ class Main():
 			self.information_frame.place_forget()
 
 
-			self.header()
+			self.headerFrame()
 			self.header_frame.place_forget()
 
 
@@ -190,10 +190,10 @@ class Main():
 			if import_type == "single image":
 				self.imported_image = image_type
 				self.image_file = get_pkg_data_filename(self.imported_image)
-				self.image_data = fits.getdata(self.image_file, ext=0)
+				self.image_data, self.header = fits.getdata(self.image_file, ext=0, header = True)
 
 				self.information_button.place(x = "4px", y = "30px")
-				#self.header_button.place(x = "4px", y = "50px")
+				self.header_button.place(x = "4px", y = "50px")
 
 				initializeFrames()
 
@@ -425,12 +425,7 @@ class Main():
 
 
 
-	def header(self):
-
-		###################################################################
-		## this functions is disabled in use im changing its functionaility
-		###################################################################
-
+	def headerFrame(self):
 		self.header_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
 		self.header_frame.place(x = "100px", y = "0px")
 
@@ -451,30 +446,37 @@ class Main():
 		view_header.place(x = "70px", y = "120px")
 
 
-		Label(self.header_frame, text = "change value of:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "160px")
-		self.uinp_change_header_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
-		self.uinp_change_header_value.place(x = "10px", y = "180px")
 
-		Label(self.header_frame, text = "value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "120px", y = "160px")
+
+		
+
+		Label(self.header_frame, text = "change value of:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "170px")
+		self.uinp_change_header_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
+		self.uinp_change_header_value.place(x = "10px", y = "190px")
+
+		Label(self.header_frame, text = "value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "120px", y = "170px")
 		self.uinp_change_header_new_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
-		self.uinp_change_header_new_value.place(x = "100px", y = "180px")
+		self.uinp_change_header_new_value.place(x = "100px", y = "190px")
 
 		change_header_value = Button(self.header_frame, text = "execute", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
 			command = lambda: changeHeaderValue(self.uinp_change_header_value.get(), self.uinp_change_header_new_value.get()))
-		change_header_value.place(x = "10px", y = "200px")
+		change_header_value.place(x = "10px", y = "230px")
+
+
 
 
 
 		def changeHeaderValue(key_name, new_val):
-			if True:
-				hdul = fits.open(self.imported_image)
-
-				hdr = hdul[0].header
-				eval("hdr[key_name] = new_val")
-
-			else:
-			#except Exception as error:
+			try:
+				try:
+					fits.setval(self.image_file, key_name, value = new_val)
+					print(Fore.GREEN + ">>> operation complete")
+				except:
+					fits.setval(self.image_file, key_name, value = int(new_val))
+					print(Fore.GREEN + ">>> operation complete")
+			except Exception as error:
 				print(Fore.RED + "--!--" + str(error) + "--!--")
+
 
 
 
@@ -532,7 +534,6 @@ class Main():
 		user_entry = uentry
 		
 		try:
-			
 			get_pkg_data_filename(user_entry)
 
 			self.packed_list.append(user_entry)
@@ -546,6 +547,7 @@ class Main():
 
 
 		self.image_stack_list = self.packed_list
+
 
 
 
@@ -711,6 +713,7 @@ class Main():
 	def programExit(self):
 		print(Fore.BLUE + ">>> quiting....")
 		self.root.destroy()
+		print(Fore.BLUE + ">>> exit....")
 		sys.exit()
 
 

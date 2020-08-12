@@ -11,4 +11,4 @@ https://github.com/xxmeowxx/FIA/issues
 wiki:
 https://github.com/xxmeowxx/FIA/wiki
 
-version 0.0.2 Beta
+version 0.0.9 Beta
