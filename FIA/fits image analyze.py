@@ -52,6 +52,12 @@ class Main():
 		self.header_button.place_forget()
 
 
+		self.header_button = Button(self.side_options_frame, text = "settings", width = 16, bg = self.btn_colot_dark, bd = "0px", fg =  "white",
+			command = lambda: frameToggles("header option"))
+		self.header_button.place_forget()
+
+
+
 		self.exit_button = Button(self.side_options_frame, text = "EXIT", width = 16, bg = "red", bd = "0px", fg =  "white",
 			command = lambda: self.programExit())
 		self.exit_button.place(x = "4px", y = "370px")
@@ -335,14 +341,6 @@ class Main():
 
 
 
-
-
-
-
-
-
-
-
 		Label(self.information_frame, text = "color filter:", bg = self.frame_dark_color, fg = self.text_color).place(x = "390px", y = "5px")
 		self.image_cmap = StringVar(self.information_frame)
 		self.image_cmap.set("BrBG")
@@ -425,6 +423,8 @@ class Main():
 
 
 
+
+
 	def headerFrame(self):
 		self.header_frame = Frame(self.main_window, bg = self.frame_dark_color, width = "500px", height = "400px")
 		self.header_frame.place(x = "100px", y = "0px")
@@ -438,7 +438,7 @@ class Main():
 
 
 		Label(self.header_frame, text = "show header", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "100px")
-		self.uinp_header = Entry(self.header_frame, bg = self.frame_dark_color, width = 10)
+		self.uinp_header = Entry(self.header_frame, fg = self.text_color, bg = self.frame_dark_color, width = 10)
 		self.uinp_header.place(x = "10px", y = "120px")
 
 		view_header = Button(self.header_frame, text = "execute", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
@@ -448,21 +448,60 @@ class Main():
 
 
 
-		
+		Label(self.header_frame, text = "change value of:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "160px")
+		self.uinp_change_header_value = Entry(self.header_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.uinp_change_header_value.place(x = "10px", y = "180px")
 
-		Label(self.header_frame, text = "change value of:", bg = self.frame_dark_color, fg = self.text_color).place(x = "10px", y = "170px")
-		self.uinp_change_header_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
-		self.uinp_change_header_value.place(x = "10px", y = "190px")
-
-		Label(self.header_frame, text = "value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "120px", y = "170px")
-		self.uinp_change_header_new_value = Entry(self.header_frame, bg = self.frame_dark_color, width = 15)
-		self.uinp_change_header_new_value.place(x = "100px", y = "190px")
+		Label(self.header_frame, text = "value:", bg = self.frame_dark_color, fg = self.text_color).place(x = "120px", y = "160px")
+		self.uinp_change_header_new_value = Entry(self.header_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.uinp_change_header_new_value.place(x = "100px", y = "180px")
 
 		change_header_value = Button(self.header_frame, text = "execute", bg = self.btn_colot_dark, fg =self.text_color, width = 15, bd = "0px", 
 			command = lambda: changeHeaderValue(self.uinp_change_header_value.get(), self.uinp_change_header_new_value.get()))
-		change_header_value.place(x = "10px", y = "230px")
+		change_header_value.place(x = "10px", y = "210px")
 
 
+
+		plot_settings_frame = Frame(self.header_frame, bg = self.frame_dark_color, width = "500px", height = "400px")
+		plot_settings_frame.place(x = "240px", y = "120px")
+		Label(plot_settings_frame, text = "Plot Settings:", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "5px")
+
+
+		Label(plot_settings_frame, text = "axes edge color", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "20px")
+		self.axes_edge = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.axes_edge.place(x = "5px", y = "40px")
+		self.axes_edge.insert(END, "black")
+
+		Label(plot_settings_frame, text = "x_tick_color", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "60px")
+		self.x_tick_color = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.x_tick_color.place(x = "5px", y = "80px")
+		self.x_tick_color.insert(END, "white")
+
+		Label(plot_settings_frame, text = "y_tick_color", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "100px")
+		self.y_tick_color = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.y_tick_color.place(x = "5px", y = "120px")
+		self.y_tick_color.insert(END, "white")
+
+		Label(plot_settings_frame, text = "face_color", bg = self.frame_dark_color, fg = self.text_color).place(x = "5px", y = "140px")
+		self.face_color = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.face_color.place(x = "5px", y = "160px")
+		self.face_color.insert(END, "white")
+
+
+		Label(plot_settings_frame, text = "fig_width", bg = self.frame_dark_color, fg = self.text_color).place(x = "100px", y = "20px")
+		self.fig_width = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.fig_width.place(x = "100px", y = "40px")
+		self.fig_width.insert(END, "7")
+
+		Label(plot_settings_frame, text = "fig_height", bg = self.frame_dark_color, fg = self.text_color).place(x = "100px", y = "60px")
+		self.fig_height = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.fig_height.place(x = "100px", y = "80px")
+		self.fig_height.insert(END, "5")
+
+		Label(plot_settings_frame, text = "axes_face_color", bg = self.frame_dark_color, fg = self.text_color).place(x = "100px", y = "100px")
+		self.axes_face_color = Entry(plot_settings_frame, fg = self.text_color, bg = self.frame_dark_color, width = 15)
+		self.axes_face_color.place(x = "100px", y = "120px")
+		self.axes_face_color.insert(END, "#828282")
 
 
 
@@ -510,6 +549,26 @@ class Main():
 
 			header_window.resizable(0,0)
 			header_window.mainloop()
+
+
+
+
+	def plotSettings(self):
+		axes_edge = self.axes_edge.get()
+		x_tick_color = self.x_tick_color.get()
+		y_tick_color = self.y_tick_color.get()
+		face_color = self.face_color.get()
+		fig_width = int(self.fig_width.get())
+		fig_height = int(self.fig_height.get())
+		axes_face_color = self.axes_face_color.get()
+		plot_style = astropy_mpl_style
+
+
+		plt.style.use(plot_style)
+		plt.rcParams["axes.facecolor"] = axes_face_color
+		plt.figure(figsize = (fig_width, fig_height)).patch.set_facecolor(self.frame_dark_color)
+		plt.rc_context({'axes.edgecolor':axes_edge, 'xtick.color':x_tick_color, 'ytick.color':y_tick_color, 'figure.facecolor':face_color})
+
 
 
 
@@ -630,8 +689,9 @@ class Main():
 
 
 	def viewImage(self, cmap_value, view_type, contrast_status):
-		try:
+		self.plotSettings()
 
+		try:
 			uinp_vmax = self.uinp_vmax_value.get()
 			uinp_vmin = self.uinp_vmin_value.get()
 			
@@ -663,10 +723,6 @@ class Main():
 			image_data = self.contrasted_data
 
 		try:
-			plt.style.use(astropy_mpl_style)
-			plt.figure(figsize = (7, 5)).patch.set_facecolor(self.frame_dark_color)
-			plt.rc_context({'axes.edgecolor':'black', 'xtick.color':'white', 'ytick.color':'white', 'figure.facecolor':'white'})
-
 			if view_type == "linear scale":
 				plt.imshow(image_data, cmap = cmap_value, vmin = uinp_vmin, vmax = uinp_vmax)
 			else:
@@ -694,6 +750,7 @@ class Main():
 			NBINS = 1000
 			if contrast_status == "inactive":
 				histogram = plt.hist(self.image_data.flatten(), NBINS)
+				
 			elif contrast_status == "active":
 				try:
 					histogram = plt.hist(self.contrasted_data.flatten(), NBINS)
@@ -705,7 +762,6 @@ class Main():
 
 		except Exception as error:
 			print(Fore.RED + "--!--" + str(error) + "--!--")
-
 
 
 
