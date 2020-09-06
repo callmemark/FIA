@@ -9,6 +9,6 @@ for bugs: please open issue on my github account
 https://github.com/xxmeowxx/FIA/issues
 
 wiki:
-https://github.com/xxmeowxx/FIA/wiki
+https://github.com/callmemark/FIA/wiki
 
 version 0.1.0-alpha
